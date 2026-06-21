@@ -28,7 +28,7 @@ HEADERS = {
 
 # ── AniList token ──────────────────────────────────────────────────────────
 AL_TOKEN = ""
-_tok_path = Path.home() / ".config/quickshell/anilist_token"
+_tok_path = Path.home() / ".config/quickshell-secrets/anilist_token"
 if _tok_path.exists():
     AL_TOKEN = _tok_path.read_text().strip()
 

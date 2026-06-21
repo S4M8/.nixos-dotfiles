@@ -76,7 +76,7 @@ LOCAL_TO_AL_MANGA = {
 }
 
 AL_TOKEN = ""
-for _f in ["~/.config/quickshell/anilist_token"]:
+for _f in ["~/.config/quickshell-secrets/anilist_token"]:
     _p = Path(_f).expanduser()
     if _p.exists():
         AL_TOKEN = _p.read_text().strip()
@@ -493,7 +493,7 @@ def al_save_entry(media_id, al_status, progress=0):
     Requires AL_TOKEN.
     """
     if not AL_TOKEN:
-        return {"ok": False, "error": "No AniList token — set ~/.config/quickshell/anilist_token"}
+        return {"ok": False, "error": "No AniList token — set ~/.config/quickshell-secrets/anilist_token"}
     try:
         result = gql(SAVE_MEDIA_LIST_Q,
                      {"mediaId": int(media_id), "status": al_status, "progress": progress},
@@ -820,6 +820,6 @@ if __name__ == "__main__":
         print(f"[anime-server] AniList token loaded ({len(AL_TOKEN)} chars) — list writes enabled")
     else:
         print("[anime-server] No AniList token — local-only mode")
-        print("[anime-server]   → echo 'YOUR_TOKEN' > ~/.config/quickshell/anilist_token")
+        print("[anime-server]   → echo 'YOUR_TOKEN' > ~/.config/quickshell-secrets/anilist_token")
     server = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
     server.serve_forever()

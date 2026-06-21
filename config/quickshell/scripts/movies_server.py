@@ -24,7 +24,7 @@ IMG_URL  = "https://image.tmdb.org/t/p"
 # ── Token & Account ───────────────────────────────────────────────────────────
 TOKEN = os.environ.get("TMDB_TOKEN", "")
 if not TOKEN:
-    for _f in ["~/.config/quickshell/tmdb_token"]:
+    for _f in ["~/.config/quickshell-secrets/tmdb_token"]:
         _p = os.path.expanduser(_f)
         if os.path.exists(_p):
             TOKEN = open(_p).read().strip()
@@ -32,12 +32,10 @@ if not TOKEN:
 
 ACCOUNT_ID = os.environ.get("TMDB_ACCOUNT_ID", "")
 if not ACCOUNT_ID:
-    for _f in ["~/.config/quickshell/tmdb_account_id",
-               "~/.config/quickshell/tmdb_account"]:
-        _p = os.path.expanduser(_f)
-        if os.path.exists(_p):
-            ACCOUNT_ID = open(_p).read().strip()
-            break
+    _f = "~/.config/quickshell-secrets/tmdb_account_id"
+    _p = os.path.expanduser(_f)
+    if os.path.exists(_p):
+        ACCOUNT_ID = open(_p).read().strip()
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -823,7 +821,7 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     if not TOKEN:
         print("[movies] WARNING: No TMDB token found!")
-        print("[movies]   → echo 'YOUR_TOKEN' > ~/.config/quickshell/tmdb_token")
+        print("[movies]   → echo 'YOUR_TOKEN' > ~/.config/quickshell-secrets/tmdb_token")
     else:
         print(f"[movies] Token loaded ({len(TOKEN)} chars)")
     if not ACCOUNT_ID:
