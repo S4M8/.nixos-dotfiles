@@ -1,0 +1,24 @@
+{ config, lib, pkgs, ... }: {
+  imports = [
+    ./modules/system/boot
+    ./modules/system/hardware
+    ./modules/system/display
+    ./modules/system/networking
+    ./modules/system/services
+    ./modules/system/fonts.nix
+    ./modules/system/nix.nix
+    ./modules/system/security.nix
+    ./modules/system/users.nix
+    ./modules/system/packages.nix
+    ./modules/system/brave-policies.nix
+  ];
+
+  nixpkgs.config.allowUnfree = true;
+
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
+
+  system.stateVersion = "26.05";
+}

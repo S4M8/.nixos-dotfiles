@@ -1,0 +1,11 @@
+/result
+.env
+.env.*
+**/.env
+**/.env.*
+config/quickshell/app_usage.json
+config/quickshell/__pycache__
+config/fastfetch/logo/*
+config/vesktop/*
+!config/vesktop/themes/
+!config/vesktop/themes/**
