@@ -35,9 +35,21 @@ if [ ! -f "$HOST_DIR/hardware-configuration.nix" ]; then
   echo "  → Saved to hosts/$HOSTNAME/hardware-configuration.nix"
 fi
 
-# ── Step 3: Age key ────────────────────────────────────────────
+# ── Step 3: Wallpapers ─────────────────────────────────────────
 echo ""
-echo "Step 3/6 — Age key (agenix)"
+echo "Step 3/7 — Wallpapers"
+if [ ! -d ~/pictures/wallpapers ]; then
+  echo "  Cloning wallpapers..."
+  mkdir -p ~/pictures
+  git clone https://github.com/S4M8/wallpapers.git ~/pictures/wallpapers
+  echo "  → ~/pictures/wallpapers"
+else
+  echo "  → Already exists"
+fi
+
+# ── Step 4: Age key ────────────────────────────────────────────
+echo ""
+echo "Step 4/7 — Age key (agenix)"
 if [ ! -f ~/.config/age/key.txt ]; then
   echo "  Generating age key..."
   mkdir -p ~/.config/age
@@ -46,12 +58,23 @@ if [ ! -f ~/.config/age/key.txt ]; then
 fi
 PUBKEY=$(grep "public key" ~/.config/age/key.txt | cut -d: -f2 | xargs)
 echo "  Public key: $PUBKEY"
-echo "  Add this key to your repo's secrets by running:"
-echo "    agenix -r $PUBKEY"
-
-# ── Step 4: Create host configs ─────────────────────────────────
 echo ""
-echo "Step 4/6 — Creating host configs"
+echo "  ── To register this machine for secret decryption ──"
+echo "  1. On a machine already in the repo, save this key:"
+echo "     echo '$PUBKEY' > ~/.nixos-dotfiles/secrets/pubkeys/$HOSTNAME.age"
+echo ""
+echo "  2. Run rekey.sh to re-encrypt all secrets:"
+echo "     cd ~/.nixos-dotfiles && bash secrets/rekey.sh"
+echo ""
+echo "  3. Commit and push:"
+echo "     git add secrets/ && git commit -m \"Add $HOSTNAME public key\" && git push"
+echo ""
+echo "  4. Pull on this machine, then rebuild:"
+echo "     cd ~/.nixos-dotfiles && git pull && sudo nixos-rebuild switch"
+
+# ── Step 5: Create host configs ─────────────────────────────────
+echo ""
+echo "Step 5/7 — Creating host configs"
 
 cat > "$HOST_DIR/base.nix" <<EOF
 { ... }: {
@@ -79,9 +102,9 @@ cat > "$HOST_DIR/home.nix" <<EOF
 EOF
 echo "  → hosts/$HOSTNAME/home.nix"
 
-# ── Step 5: Symlink /etc/nixos ──────────────────────────────────
+# ── Step 6: Symlink /etc/nixos ──────────────────────────────────
 echo ""
-echo "Step 5/6 — Symlink /etc/nixos"
+echo "Step 6/7 — Symlink /etc/nixos"
 if [ "$(readlink -f /etc/nixos)" != "$REPO_DIR" ]; then
   sudo rm -rf /etc/nixos
   sudo ln -s "$REPO_DIR" /etc/nixos
@@ -90,9 +113,9 @@ else
   echo "  → Already symlinked"
 fi
 
-# ── Step 6: Rebuild ─────────────────────────────────────────────
+# ── Step 7: Rebuild ─────────────────────────────────────────────
 echo ""
-echo "Step 6/6 — Rebuild"
+echo "Step 7/7 — Rebuild"
 echo "  Running: nixos-rebuild switch --flake $REPO_DIR#$HOSTNAME"
 echo ""
 read -r -p "Proceed? [Y/n] " CONFIRM
